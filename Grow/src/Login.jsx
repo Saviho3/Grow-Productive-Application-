@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "./supabaseClient";
 import "./Login.css";
 
@@ -7,6 +8,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +34,8 @@ const Login = () => {
           alert("Account created successfully! Please check your email to verify your account.");
           setEmail("");
           setPassword("");
+          // Navigate to Grow page after successful signup
+          navigate("/grow");
         }
       } else {
         // Login flow
@@ -46,6 +50,8 @@ const Login = () => {
           alert("Login successful! Welcome back.");
           setEmail("");
           setPassword("");
+          // Navigate to Grow page after successful login
+          navigate("/grow");
         }
       }
     } catch (error) {
