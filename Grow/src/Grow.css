@@ -116,3 +116,15 @@
     padding: 20px;
   }
 }
+
+.card {
+  padding: 2em;
+}
+
+.response-box {
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}

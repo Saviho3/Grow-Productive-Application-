@@ -10,38 +10,79 @@ const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const navigate = useNavigate();
 
+  async function insertUser(user_ID, insert_email) {
+    const { data, error } = await supabase
+      .from("profiles")
+      .insert([
+        {
+          id: user_ID,
+          email: insert_email,
+        },
+      ]);
+
+    if (error) {
+      console.error("Insert user error:", error);
+    } else {
+      console.log("Inserted:", data);
+    }
+  }
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       alert("Please fill in both email and password fields");
       return;
     }
 
     setLoading(true);
-    
+
     try {
       if (isSignUp) {
+        // Check if profile already exists before signup
+        const { data: existingUser } = await supabase
+          .from("profiles")
+          .select("id")
+          .eq("email", email)
+          .single();
+
+        if (existingUser) {
+          alert("Email already registered. Please log in.");
+          setLoading(false);
+          return;
+        }
+
         // Sign up flow
         const { data, error } = await supabase.auth.signUp({
           email,
-          password
+          password,
         });
 
         if (error) {
-          alert(`Sign up failed: ${error.message}`);
+          if (
+            error.message.toLowerCase().includes("already registered") ||
+            error.status === 400
+          ) {
+            alert("This email is already registered. Please log in instead.");
+          } else {
+            alert(`Sign up failed: ${error.message}`);
+          }
         } else {
-          alert("Account created successfully! Please check your email to verify your account.");
+          if (data.user) {
+            await insertUser(data.user.id, email);
+          }
+          alert(
+            "Account created successfully! Please check your email to verify your account."
+          );
           setEmail("");
           setPassword("");
-          // Navigate to Grow page after successful signup
           navigate("/grow");
         }
       } else {
         // Login flow
         const { data, error } = await supabase.auth.signInWithPassword({
           email,
-          password
+          password,
         });
 
         if (error) {
@@ -50,7 +91,6 @@ const Login = () => {
           alert("Login successful! Welcome back.");
           setEmail("");
           setPassword("");
-          // Navigate to Grow page after successful login
           navigate("/grow");
         }
       }
@@ -72,7 +112,7 @@ const Login = () => {
       <div className="login-container">
         <form className="login-form" onSubmit={handleSubmit}>
           <h2>{isSignUp ? "Create Account" : "Welcome"}</h2>
-          
+
           <div className="form-group">
             <label htmlFor="email">Email</label>
             <input
@@ -84,7 +124,7 @@ const Login = () => {
               disabled={loading}
             />
           </div>
-          
+
           <div className="form-group">
             <label htmlFor="password">Password</label>
             <input
@@ -96,21 +136,25 @@ const Login = () => {
               disabled={loading}
             />
           </div>
-          
-          <button 
-            type="submit" 
-            className="login-btn"
-            disabled={loading}
-          >
-            {loading ? (isSignUp ? "Creating Account..." : "Logging in...") : (isSignUp ? "Sign Up" : "Log In")}
+
+          <button type="submit" className="login-btn" disabled={loading}>
+            {loading
+              ? isSignUp
+                ? "Creating Account..."
+                : "Logging in..."
+              : isSignUp
+              ? "Sign Up"
+              : "Log In"}
           </button>
-          
+
           <div className="toggle-container">
             <p className="toggle-text">
-              {isSignUp ? "Already have an account?" : "Don't have an account?"}
+              {isSignUp
+                ? "Already have an account?"
+                : "Don't have an account?"}
             </p>
-            <button 
-              type="button" 
+            <button
+              type="button"
               className="toggle-btn"
               onClick={toggleMode}
               disabled={loading}
@@ -124,4 +168,4 @@ const Login = () => {
   );
 };
 
-export default Login; 
+export default Login;
