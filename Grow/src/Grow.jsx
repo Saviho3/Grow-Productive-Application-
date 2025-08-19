@@ -15,7 +15,7 @@ const Grow = () => {
 
   const callPython = async (userTask) => {
     try {
-      const response = await fetch("/grow", {
+      const response = await fetch("http://localhost:5000/grow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task: userTask }),
@@ -23,9 +23,9 @@ const Grow = () => {
 
       const data = await response.json();
       setTaskData(data);
-      setTaskName(data.result.name);
-      setTaskTime(data.result.time)
-      setTaskStatus(data.result.status);
+      setTaskName(data.name);
+      setTaskTime(data.time)
+      setTaskStatus(data.status);
     } catch (error) {
       console.error("Error calling Python backend:", error);
     }
@@ -48,8 +48,11 @@ const Grow = () => {
         {taskData && (
           <div className="response-box">
             <p>Server Response: {JSON.stringify(taskData)}</p>
+            <br />
             <p>Task Name: {taskName}</p>
+            <br />
             <p>Status: {taskStatus}</p>
+            <br />
             <p>Time: {taskTime} minutes</p>
 
           </div>

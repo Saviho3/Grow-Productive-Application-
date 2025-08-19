@@ -9,7 +9,7 @@ def generatePromt(task_list_str, user_input):
     2. If the task **exists**, return:
     - "exists"
     - The best-matching task name from the list
-    - The average time it takes
+    - The average time it takes in minutes
 
     3. If the task **does not exist**, return:
     - "not-exists"
@@ -17,9 +17,9 @@ def generatePromt(task_list_str, user_input):
     - An estimated average time based on similar tasks if possible, or use your best judgment.
 
     Be concise in your output and return only:
-    - Status: "exists" or "not-exists"
-    - Task Name: best match or generated name
-    - Time (in minutes)
+    status, name, time
+    do not include the header names such as status, name, or time in the output
+    
     The task list is as follows:
     {task_list_str}
 
