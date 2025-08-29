@@ -39,7 +39,7 @@ def taskAssesment():
 
     task_list_str = "\n".join(task_strings)
 
-    # user_input = "did my homework"
+    # system & user prompts
     system_message = prompts.system_message
     prompt = prompts.generatePromt(task_list_str, user_task)
 
@@ -54,9 +54,21 @@ def taskAssesment():
         return response.choices[0].message.content
 
     result = getTaskInfo()
-    print(result)
+    print("Raw GPT output:", result)
+
     try:
+        # split into 3 parts
         status, name, time = [x.strip() for x in result.split(",")]
+
+        # clean quotes
+        status = status.strip('"').strip("'")
+        name = name.strip('"').strip("'")
+        time = time.strip('"').strip("'")
+
+        # convert time to int if possible
+        if time.isdigit():
+            time = int(time)
+
     except ValueError:
         return jsonify({
             "error": "GPT output format unexpected",
@@ -64,12 +76,12 @@ def taskAssesment():
         }), 500
 
     json_result = {
-        'status':status,
-        'time': time,
-        'name': name
+        "status": status,
+        "time": time,
+        "name": name
     }
-    
-    print(json_result)
+
+    print("Parsed JSON:", json_result)
 
     return jsonify(json_result)
 

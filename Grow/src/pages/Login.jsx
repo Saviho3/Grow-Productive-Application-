@@ -17,6 +17,7 @@ const Login = () => {
         {
           id: user_ID,
           email: insert_email,
+          level: 0,
         },
       ]);
 
@@ -69,6 +70,7 @@ const Login = () => {
           }
         } else {
           if (data.user) {
+            localStorage.setItem("user_id", data.user.id);
             await insertUser(data.user.id, email);
           }
           alert(
@@ -88,6 +90,9 @@ const Login = () => {
         if (error) {
           alert(`Login failed: ${error.message}`);
         } else {
+          if (data.user) {
+            localStorage.setItem("user_id", data.user.id);
+          }
           alert("Login successful! Welcome back.");
           setEmail("");
           setPassword("");

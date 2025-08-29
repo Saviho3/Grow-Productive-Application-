@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../styles/Grow.css";
-import {FaSpinner} from 'react-icons/fa';
+import {FaSlash, FaSpinner} from 'react-icons/fa';
 import { supabase } from '../supabaseClient.js'
+import { Link } from "react-router-dom";
+import Flower from '../components/Flower.jsx'
 
 
 
@@ -10,10 +12,49 @@ const Grow = () => {
   const [userTask, setUserTask] = useState('');
   const [task, setTask] = useState('');
   const [taskData, setTaskData] = useState(null);
-  const [taskName, setTaskName] = useState('')
-  const[taskTime, setTaskTime] = useState('')
-  const[taskStatus, setTaskStatus] = useState('')
-  const[loading, setLoading] = useState(false)
+  const [taskName, setTaskName] = useState('');
+  const[taskTime, setTaskTime] = useState(null);
+  const[taskStatus, setTaskStatus] = useState('');
+  const[loading, setLoading] = useState(false);
+  const userID = localStorage.getItem("user_id");
+  const [userLevel, setUserLevel] = useState(0) ;
+  const [currentExp, setCurrentExp] = useState(0);
+  const [requiredExp, setRequiredExp] = useState(10);
+  const [flowerType, setFlowerType] = useState('');
+  const [blockedStatus, setBlockedStatus] = useState(false);
+
+  useEffect(() => {
+    if (!flowerType) {
+      setBlockedStatus(true);
+    } else {
+      setBlockedStatus(false);
+    }
+  }, [flowerType])
+
+  useEffect(() => {
+          const fetchUserStats = async () => {
+            const { data, error } = await supabase
+              .from("profiles")
+              .select("level, current_exp, required_exp, current_flower")
+              .eq("id", userID)
+              .maybeSingle();
+      
+            if (error) {
+              console.error("Failed to get user_level:", error);
+            } else {
+              console.log(data);
+              setUserLevel(data?.level ?? null);
+              setCurrentExp(data?.current_exp ?? null);
+              setRequiredExp(data?.required_exp ?? null);
+              setFlowerType(data?.current_flower ?? null);
+            }
+          };
+      
+          if (userID) {
+            fetchUserStats();
+          }
+        }, [userID]);
+
 
 
   const callPython = async (userTask) => {
@@ -44,7 +85,6 @@ const Grow = () => {
     
   };
 
-
   async function configureSupabase(task_name, task_time) {
     const {error} = await supabase.from("tasks").upsert({
       "name": task_name,
@@ -62,6 +102,30 @@ const Grow = () => {
 
   }
 
+  const handleLevelUp = async (newLevel, newExp, newRequiredExp) => {
+    setCurrentExp(newExp);
+    setRequiredExp(newRequiredExp);
+    setUserLevel(newLevel);
+
+    if (newLevel >= 4) {
+      setBlockedStatus(true);
+    }
+    const { error } = await supabase
+      .from("profiles")
+      .update({
+        level: newLevel,
+        current_exp: newExp,
+        required_exp: newRequiredExp,
+      })
+      .eq("id", userID);
+
+    if (error) {
+      console.error("Error updating level:", error);
+    }
+
+  };
+
+
   return (
     
     <div className="grow-page">
@@ -75,8 +139,16 @@ const Grow = () => {
         <button 
         type='submit'
         onClick={() => callPython(userTask)}
+        disabled={blockedStatus}
         >Submit</button>
-        <button className="flower-picker-button">Pick a flower</button>
+        <Link to="/flower-picker" className = 'flower-picker-link'>Pick a Flower</Link>
+        <Flower 
+              taskTime = {taskTime}
+              userLevel = {userLevel}
+              currentExp = {currentExp}
+              requiredExp = {requiredExp}
+              flowerType = {flowerType}
+              onLevelUp={handleLevelUp}/>
         {taskData && (
           <div className="response-box">
             <p>Server Response: {JSON.stringify(taskData)}</p>
@@ -86,6 +158,8 @@ const Grow = () => {
             <p>Status: {taskStatus}</p>
             <br />
             <p>Time: {taskTime} minutes</p>
+            
+            
 
           </div>
         )}
