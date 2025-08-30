@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "../styles/Grow.css";
-import {FaSlash, FaSpinner} from 'react-icons/fa';
+import { FaSpinner } from 'react-icons/fa';
 import { supabase } from '../supabaseClient.js'
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Flower from '../components/Flower.jsx'
 
 
-
 const Grow = () => {
-
+  const navigate = useNavigate();
   const [userTask, setUserTask] = useState('');
   const [task, setTask] = useState('');
   const [taskData, setTaskData] = useState(null);
@@ -125,30 +124,50 @@ const Grow = () => {
 
   };
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem('user_id');
+      navigate('/login');
+    } catch (error) {
+      console.error('Logout error:', error);
+      navigate('/login');
+    }
+  };
+
 
   return (
-    
     <div className="grow-page">
+      <header className="grow-header">
+        <button className="logout-btn" onClick={handleLogout}>Logout</button>
+        <h1 className="grow-title">Grow</h1>
+      </header>
+      
       <div className={`grow-container ${loading ? "blurred" : ""}`}>
-        <h1>Welcome to Grow</h1>
-        <p>You have successfully logged in!</p>
-        <input className="task-text" 
-        type="text" 
-        placeholder="Please enter a task"
-        onChange={(e) => setUserTask(e.target.value)}/>
-        <button 
-        type='submit'
-        onClick={() => callPython(userTask)}
-        disabled={blockedStatus}
-        >Submit</button>
-        <Link to="/flower-picker" className = 'flower-picker-link'>Pick a Flower</Link>
-        <Flower 
-              taskTime = {taskTime}
-              userLevel = {userLevel}
-              currentExp = {currentExp}
-              requiredExp = {requiredExp}
-              flowerType = {flowerType}
-              onLevelUp={handleLevelUp}/>
+        <div className="task-input-container">
+          <input 
+            className="task-input" 
+            type="text" 
+            placeholder="Please enter a task"
+            onChange={(e) => setUserTask(e.target.value)}
+          />
+          <button 
+            className="submit-btn"
+            type='submit'
+            onClick={() => callPython(userTask)}
+            disabled={blockedStatus}
+          >Submit</button>
+          <Link to="/flower-picker" className="flower-picker-btn">Pick a Flower</Link>
+        </div>
+        <div className="flower-card">
+          <Flower 
+            taskTime = {taskTime}
+            userLevel = {userLevel}
+            currentExp = {currentExp}
+            requiredExp = {requiredExp}
+            flowerType = {flowerType}
+            onLevelUp={handleLevelUp}/>
+        </div>
         {taskData && (
           <div className="response-box">
             <p>Server Response: {JSON.stringify(taskData)}</p>
@@ -158,9 +177,6 @@ const Grow = () => {
             <p>Status: {taskStatus}</p>
             <br />
             <p>Time: {taskTime} minutes</p>
-            
-            
-
           </div>
         )}
       </div>
