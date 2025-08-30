@@ -1,7 +1,11 @@
-import React, { useState } from "react";
-import {FaSpinner} from 'react-icons/fa';
+import React from "react";
 import { supabase } from '../supabaseClient.js';
 import { Link } from "react-router-dom";
+import flowerBlue from '../../images/flower-blue.gif';
+import flowerPink from '../../images/flower-pink.gif';
+import flowerRed from '../../images/flower-red.gif';
+import tulipPurple from '../../images/tulip-purple.gif';
+import '../styles/FlowerSelect.css';
 
 const FlowerSelect = () => {
     const userID = localStorage.getItem("user_id")
@@ -21,28 +25,47 @@ const FlowerSelect = () => {
                 }
     }
 
-    return(
-        <div className="flower-select-div">
-            <Link to ="/grow">Back to home</Link>
-            <div 
-            className = "flower-blue"
-            onClick={() => configureFlower("flower-blue")}><img src="../../images/flower-blue.gif" alt="image of a blue flower" /></div>
-            
-            <div 
-            className = "flower-blue"
-            onClick={() => configureFlower("flower-pink")}><img src="../../images/flower-pink.gif" alt="image of a pink flower" /></div>
-            
-            <div 
-            className = "flower-blue"
-            onClick={() => configureFlower("flower-red")}><img src="../../images/flower-red.gif" alt="image of a red flower" /></div>
-           
-            <div 
-            className = "flower-blue"
-            onClick={() => configureFlower("tulip-purple")}><img src="../../images/tulip-purple.gif" alt="image of a pruple flower" /></div>
+    const flowerOptions = [
+        { type: "flower-blue", image: flowerBlue, label: "Blue" },
+        { type: "flower-pink", image: flowerPink, label: "Pink" },
+        { type: "flower-red", image: flowerRed, label: "Red" },
+        { type: "tulip-purple", image: tulipPurple, label: "Purple" }
+    ];
 
+    return(
+        <div className="fs-page">
+            <div className="fs-header">
+                <Link to="/grow" className="back-link">← Back to home</Link>
+                <h1 className="fs-title">Choose Your Flower</h1>
+            </div>
+            
+            <div className="flowers-grid">
+                {flowerOptions.map((flower) => (
+                    <div 
+                        key={flower.type}
+                        className="flower-card"
+                        onClick={() => configureFlower(flower.type)}
+                        onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                configureFlower(flower.type);
+                            }
+                        }}
+                        tabIndex={0}
+                        role="button"
+                        aria-label={`Select ${flower.label}`}
+                    >
+                        <img 
+                            src={flower.image} 
+                            alt={flower.label}
+                            className="flower-image"
+                        />
+                        <h3 className="flower-label">{flower.label}</h3>
+                    </div>
+                ))}
+            </div>
         </div>
     )
 }
-
 
 export default FlowerSelect;

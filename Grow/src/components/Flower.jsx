@@ -1,6 +1,11 @@
 import React, { useState, useEffect } from "react";
-import {FaSpinner} from 'react-icons/fa';
-import { supabase } from '../supabaseClient.js'
+import level1 from '../../images/level-1.png';
+import level2 from '../../images/level-2.gif';
+import level3 from '../../images/level-3.gif';
+import flowerBlue from '../../images/flower-blue.gif';
+import flowerPink from '../../images/flower-pink.gif';
+import flowerRed from '../../images/flower-red.gif';
+import tulipPurple from '../../images/tulip-purple.gif';
 
 const Flower = ({taskTime, userLevel, currentExp, requiredExp, flowerType, onLevelUp }) => {
   const userID = localStorage.getItem('user_id');
@@ -61,13 +66,22 @@ const Flower = ({taskTime, userLevel, currentExp, requiredExp, flowerType, onLev
   const configureFlower = async () => {
       if (userLevel < 4) {
         if (userLevel == 1) {
-          setFlowerFile('../../images/level-'+userLevel+'.png')
+          setFlowerFile(level1);
+        } else if (userLevel == 2) {
+          setFlowerFile(level2);
+        } else if (userLevel == 3) {
+          setFlowerFile(level3);
         } else {
-          setFlowerFile('../../images/level-'+userLevel+'.gif')
+          setFlowerFile(null);
         }
-      }
-      else {
-        setFlowerFile('../../images/'+flowerType+'.gif')
+      } else {
+        const flowerMap = {
+          'flower-blue': flowerBlue,
+          'flower-pink': flowerPink,
+          'flower-red': flowerRed,
+          'tulip-purple': tulipPurple,
+        };
+        setFlowerFile(flowerMap[flowerType] || null);
       }
     }
 
@@ -77,7 +91,7 @@ const Flower = ({taskTime, userLevel, currentExp, requiredExp, flowerType, onLev
         <div>
           {flowerFile && <img src={flowerFile} alt="image of flower" />}
           <h3>Level: {userLevel}</h3>
-          <h3>Flower Growth Status: {currentExp}/{requiredExp} {userLevel}</h3>
+          <h3>Flower Growth Status: {currentExp}/{requiredExp}</h3>
         </div>
     )
 }

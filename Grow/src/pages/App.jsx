@@ -12,6 +12,7 @@ function App() {
         <Route path="/grow" element={<Grow />} />
         <Route path="/flower-picker" element={<FlowerSelect />} />
         <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </Router>
   );
