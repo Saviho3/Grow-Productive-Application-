@@ -251,3 +251,43 @@
     margin: 16px 0;
   }
 }
+/* Hover overlay box and button styles */
+.hover-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.hover-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.hover-box h2 {
+  color: black;
+  margin-bottom: 20px;
+}
+
+.hover-box .flower-picker-btn {
+  font-size: 20px;
+  padding: 16px 32px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 250px;
+  justify-content: center;
+}

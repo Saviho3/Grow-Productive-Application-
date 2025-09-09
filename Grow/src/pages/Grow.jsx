@@ -143,7 +143,7 @@ const Grow = () => {
         <h1 className="grow-title">Grow</h1>
       </header>
       
-      <div className={`grow-container ${loading ? "blurred" : ""}`}>
+      <div className={`grow-container ${(loading || blockedStatus) ? "blurred" : ""}`}>
         <div className="task-input-container">
           <input 
             className="task-input" 
@@ -180,6 +180,19 @@ const Grow = () => {
           </div>
         )}
       </div>
+      {!loading && blockedStatus && (
+        <div className="hover-overlay" role="dialog" aria-modal="true">
+          <div className="hover-box">
+            <h2>Please Select a Flower</h2>
+            <button
+              className="flower-picker-btn"
+              onClick={() => navigate('/flower-picker')}
+            >
+              Select Flowers
+            </button>
+          </div>
+        </div>
+      )}
       {loading && (
         <div className = 'loading-overlay'>
           <FaSpinner className='loading-icon'></FaSpinner>
