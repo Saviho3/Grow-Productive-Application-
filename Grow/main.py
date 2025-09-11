@@ -9,7 +9,6 @@ import prompts
 app = Flask(__name__)
 CORS(app)
 
-
 @app.route("/grow", methods=["POST"])
 def taskAssesment():
     data = request.get_json()

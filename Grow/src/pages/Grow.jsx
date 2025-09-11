@@ -21,6 +21,7 @@ const Grow = () => {
   const [requiredExp, setRequiredExp] = useState(10);
   const [flowerType, setFlowerType] = useState('');
   const [blockedStatus, setBlockedStatus] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
 
   useEffect(() => {
     if (!flowerType) {
@@ -59,7 +60,7 @@ const Grow = () => {
   const callPython = async (userTask) => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:5000/grow", {
+      const response = await fetch("http://127.0.0.1:5000/grow", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ task: userTask }),
@@ -108,6 +109,7 @@ const Grow = () => {
 
     if (newLevel >= 4) {
       setBlockedStatus(true);
+      setShowCongrats(true); // Show congratulations overlay
     }
     const { error } = await supabase
       .from("profiles")
@@ -196,6 +198,22 @@ const Grow = () => {
       {loading && (
         <div className = 'loading-overlay'>
           <FaSpinner className='loading-icon'></FaSpinner>
+        </div>
+      )}
+      {showCongrats && (
+        <div className="hover-overlay" role="dialog" aria-modal="true">
+          <div className="congrats-box">
+            <button
+              className="close-btn"
+              onClick={() => setShowCongrats(false)}
+              aria-label="Close Congratulations"
+            >
+              ❌
+            </button>
+            <h2>🎉 Congratulations!</h2>
+            <p>You've reached the max level! Please select a different flower</p>
+            <div className="confetti-container" />
+          </div>
         </div>
       )}
     </div>
