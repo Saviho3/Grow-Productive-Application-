@@ -291,3 +291,65 @@
   max-width: 250px;
   justify-content: center;
 }
+.congrats-box {
+  background: white;
+  padding: 4rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  position: relative;
+  animation: popIn 0.3s ease-out;
+  max-width: 600px;
+  width: 95%;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.congrats-box h2 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: black;
+  margin: 0;
+}
+
+.congrats-box p {
+  font-size: 1.25rem;
+  color: #333;
+  margin: 0;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: red;
+  z-index: 1002;
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.confetti-container {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  top: 0;
+  left: 0;
+  z-index: 999;
+}
